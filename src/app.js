@@ -4,24 +4,19 @@ var express = require('express');
 var path = require('path');
 var wsm = require('ws');
 
-var RoomManager = require('RoomManager');
+var RoomManager = require('./RoomManager');
 
 var app = express();
 app.set('port', process.env.PORT || 8080);
 
 
 /*
- * Definition of constants
- */
-
-const ws_uri = "ws://130.206.81.33:8888/kurento";
-
-/*
  * Definition of global variables.
  */
 
+// TODO  handle sessions
+
 var idCounter = 0;
-var master = null;
 var pipeline = null;
 var viewers = {};
 var kurentoClient = null;
