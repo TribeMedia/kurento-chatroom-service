@@ -4,31 +4,23 @@ var kurento = require('kurento-client');
 const ws_uri = "ws://localhost:8888/kurento";
 
 
-exports.PipelineFactory = function PipelineFactory() {
+exports.create = function () {
+    var pipeline = null;
+    kurento(ws_uri, function(error, kurentoClient) {
+        if (error) {
+            console.log(error)
+            return;
+        }
 
-};
-
-PipelineFactory.prototype = {
-    create: function (callback) {
-        var pipeline = null;
-        kurento(ws_uri, function(error, kurentoClient) {
+        kurentoClient.create('MediaPipeline', function(error, _pipeline) {
             if (error) {
-                return callback(error);
+                console.log(error)
+                return;
             }
 
-            kurentoClient.create('MediaPipeline', function(error, _pipeline) {
-                if (error) {
-                    return callback(error);
-                }
-
-                pipeline = _pipeline;
-                return pipeline;
-            });
+            pipeline = _pipeline;
         });
-    },
+    });
 
-
-    shutdown: function () {
-
-    }
-};
+    return pipeline;
+}

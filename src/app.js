@@ -4,7 +4,8 @@ var express = require('express');
 var path = require('path');
 var wsm = require('ws');
 
-var RoomManager = require('./RoomManager');
+var PipelineFactory = require('./PipelineFactory');
+var Room = require('./Room').Room;
 
 var app = express();
 app.set('port', process.env.PORT || 8080);
@@ -16,22 +17,23 @@ app.set('port', process.env.PORT || 8080);
 
 // TODO  handle sessions
 
-var idCounter = 0;
-var pipeline = null;
-var viewers = {};
-var kurentoClient = null;
-var roomManager = new RoomManager();
+var rooms = [],
+    idCounter = 0,
+    pipeline = null,
+    viewers = {},
+    kurentoClient = null;
 
 function nextUniqueId() {
     idCounter++;
     return idCounter.toString();
 }
+
 /*
  * Server startup
  */
 
 var port = app.get('port');
-var server = app.listen(port, function() {
+var server = app.listen(port, '0.0.0.0', function() {
     console.log('Express server started ');
     console.log('Connect to http://<host_name>:' + port + '/');
 });
@@ -138,6 +140,10 @@ wss.on('connection', function(ws) {
     });
 });
 
+
+/*
+ * Handling functions TODO
+ */
 
 function joinRoom(roomName, participantName) {
     if (roomManager.joinRoom(roomName, participantName)) {
