@@ -6,7 +6,7 @@ const ws_uri = "ws://localhost:8888/kurento";
 
 exports.create = function () {
     var pipeline = null;
-    kurento(ws_uri, function(error, kurentoClient) {
+    kurento.KurentoClient(ws_uri, function(error, kurentoClient) {
         if (error) {
             console.log(error)
             return;

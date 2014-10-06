@@ -1,6 +1,6 @@
-var Participant = require('Participant').Participant;
+var Participant = require('./Participant').Participant;
 
-exports.Room = function Room(roomName, pipeline) {
+var Room = function Room(roomName, pipeline) {
 	this.participants = [];
 	this.roomName = roomName;
 	this.pipeline = pipeline;
@@ -11,8 +11,8 @@ Room.prototype = {
 	constructor: Room,
 
 
-	addParticipant: function (participantName, session) {
-		var sender = new Participant(participantName, session, this.pipeline);
+	addParticipant: function (participantName) {
+		var sender = new Participant(participantName, this.pipeline);
 
 		console.log('Connecting ' + sender.name + ' with peers');
 		for (var participant in this.participants) {
@@ -20,14 +20,14 @@ Room.prototype = {
 		}
 
 		this.participants[participantName] = sender;
-
+		return sender;
 	},
 
 	
 	removeParticipant: function (participantName) {
 		if (!this.participants[participantName]) {
 			console.log('Error: ' + participantName + ' is not in room ' + this.roomName);
-			return;
+			return null;
 		}
 
 		console.log('Removing participant ' + participantName + ' from room ' + this.roomName);
@@ -39,18 +39,24 @@ Room.prototype = {
 		for (var peer in this.participants) {
 			peer.cancelVideoFrom(participantName);
 		}
-
-		// TODO Send notification to the rest of participants
+		return participant.name;
 	},
 
 
-	getParticipants: function () {
-		return this.participants;
+	getParticipantsNames: function () {
+		var panticipantNames = [];
+		for (participant in this.participants){
+			participantNames.push(participant.name);
+		}
+		return participantNames;
 	},
 
 
 	getParticipant: function (participantName) {
-		return this.participants[participantName];
+		if (!this.participants[participantName]) {
+			return null;
+		}
+		return this.participants[participantName].name;
 	},
 
 
@@ -60,9 +66,11 @@ Room.prototype = {
 
 
 	shutdown: function () {
-		for (participant in participants) {
+		for (participant in this.participants) {
 			participant.close();
 			participant = null;
 		}
 	}
 };
+
+exports.Room = Room;

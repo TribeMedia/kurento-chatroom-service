@@ -1,7 +1,6 @@
-exports.Participant = function Participant(name, session, pipeline) {
+var Participant = function Participant(name, pipeline) {
     this.pipeline = pipeline;
     this.name = name;
-    this.session = session;
     this.outgoingMedia = null;
     this.incomingMedia = [];
     
@@ -72,7 +71,7 @@ Participant.prototype = {
 
         console.log('PARTICIPANT ' + this.name + ': canceling video reception from ' + sender.name);
         this.incomingMedia[senderName].release();
-        delete this.incomingMedia[senderName)];
+        delete this.incomingMedia[senderName];
 
         
     },
@@ -88,3 +87,5 @@ Participant.prototype = {
         this.outgoingMedia.release();
     }
 };
+
+exports.Participant = Participant;

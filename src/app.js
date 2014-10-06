@@ -86,17 +86,17 @@ wss.on('connection', function(ws) {
             }));
             break;
 
-        case 'receiveVideoFrom':
-            var receiver = message.params.receiver;
-            var sender = message.params.sender;
+        // case 'receiveVideoFrom':
+        //     var receiver = message.params.receiver;
+        //     var sender = message.params.sender;
 
-            var response = receiveVideo(receiver, sender);
+        //     var response = receiveVideo(receiver, sender);
 
-            ws.send(JSON.stringify({
-                id : 'receiveVideoResponse',
-                response : response
-            }));
-            break;
+        //     ws.send(JSON.stringify({
+        //         id : 'receiveVideoResponse',
+        //         response : response
+        //     }));
+        //     break;
 
         case 'leaveRoom':
             var participantName = message.params.participantName;
@@ -146,7 +146,16 @@ wss.on('connection', function(ws) {
  */
 
 function joinRoom(roomName, participantName) {
-    if (roomManager.joinRoom(roomName, participantName)) {
+    if (!rooms[roomName]) {
+        console.log('Room ' + roomName + ' does not exist');
+        console.log('Creating room ' + roomName + '...');
+        addRoom(roomName);
+    }
+    
+
+    var room = rooms[roomName];
+
+    if (room.addParticipant(participantName)) {
         return participantName + ' joined room ' + roomName;
     }
     else {
@@ -155,41 +164,66 @@ function joinRoom(roomName, participantName) {
 }
 
 
-function receiveVideo(receiver, sender) {
-    if (roomManager.receiveVideo(receiver, sender)) {
-        return receiver + ' is now receiving video from ' + sender;
-    }
-    else {
-        return 'Error: ' + receiver + ' could not receive video from ' + sender;
-    }
-}
+// function receiveVideo(receiver, sender) {
+//     if (roomManager.receiveVideo(receiver, sender)) {
+//         return receiver + ' is now receiving video from ' + sender;
+//     }
+//     else {
+//         return 'Error: ' + receiver + ' could not receive video from ' + sender;
+//     }
+// }
 
 
 function leaveRoom(participantName, roomName) {
-    if (roomManager.leaveRoom(roomName, participantName)) {
-        return participantName + ' left room ' + roomName;
+    if (!rooms[roomName]) {
+        console.log('Error: Room ' + roomName + ' does not exist');
+        return 'Error: Room ' + roomName + ' does not exist';
+    }
+
+    var room = rooms[roomName];
+
+    if (room.getParticipant(participantName)) {
+        console.log(participantName + ' left the room ' + roomName);
+        return participantName + ' left the room ' + roomName;
     }
     else {
-        return 'Error: ' + participantName + ' could not leave room ' + roomName;
+        return 'Error: ' + participantName + ' is not a participant in room ' + roomName;
     }
 }
 
 
 function getRooms() {
-    return roomManager.getRooms();
+    return rooms;
 }
 
 
 function addRoom(roomName) {
-    if (roomManager.addRoom(roomName)) {
-        return 'Room ' + roomName + ' created';
+    if (rooms[roomName]) {
+        console.log('Error: room ' + roomName + ' already exists');
+        return 'Error: room ' + roomName + ' already exists';
     }
-    else {
-        return 'Error: Could not create room ' + roomName;
-    }
+
+    var pipeline = PipelineFactory.create();
+    var room = new Room(roomName, pipeline);
+    console.log('Room ' + roomName + ' was created');
+    return 'Room ' + roomName + ' was created';
 }
 
 
 function getParticipantsNames(roomName) {
-    return roomManager.getParticipants(roomName);
+    if (!rooms[roomName]) {
+        return 'Error: Room ' + roomName + ' does not exist';
+    }
+
+    return rooms[roomName].getParticipantsNames();
+}
+
+
+function getNParticipants(roomName) {
+    if (!rooms[roomName]) {
+        console.log('Error: Room ' + roomName + ' does not exist');
+        return 'Error: Room ' + roomName + ' does not exist';
+    }
+
+    return rooms[roomName].getNParticipants();
 }
