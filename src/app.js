@@ -69,7 +69,7 @@ wss.on('connection', function(ws) {
         var message = JSON.parse(_message);
         console.log('Connection ' + sessionId + ' received message ', message);
 
-        switch (message.method) {
+        switch (message.id) {
         case 'joinRoom':
             var participantName = message.params.participantName;
             var roomName = message.params.roomName;
@@ -86,17 +86,21 @@ wss.on('connection', function(ws) {
             }));
             break;
 
-        // case 'receiveVideoFrom':
-        //     var receiver = message.params.receiver;
-        //     var sender = message.params.sender;
+        case 'receiveVideoFrom':
+            var receiver = message.params.receiver;
+            var sender = message.params.sender;
+            var sdpOffer = message.params.sdpOffer;
 
-        //     var response = receiveVideo(receiver, sender);
+            var sdpAnswer = receiveVideo(receiver, sender, sdpOffer);
 
-        //     ws.send(JSON.stringify({
-        //         id : 'receiveVideoResponse',
-        //         response : response
-        //     }));
-        //     break;
+            ws.send(JSON.stringify({
+                id : 'receiveVideoResponse',
+                params: {
+                    spdAnswer : sdpAnswer,
+                    sender: sender
+                }
+            }));
+            break;
 
         case 'leaveRoom':
             var participantName = message.params.participantName;
@@ -104,7 +108,7 @@ wss.on('connection', function(ws) {
             var response = leaveRoom(participantName, roomName);
 
             ws.send(JSON.stringify({
-                id : 'leaveRoomsResponse',
+                id : 'leaveRoomResponse',
                 response : response
             }));
             break;
@@ -141,10 +145,6 @@ wss.on('connection', function(ws) {
 });
 
 
-/*
- * Handling functions TODO
- */
-
 function joinRoom(roomName, participantName) {
     if (!rooms[roomName]) {
         console.log('Room ' + roomName + ' does not exist');
@@ -164,14 +164,30 @@ function joinRoom(roomName, participantName) {
 }
 
 
-// function receiveVideo(receiver, sender) {
-//     if (roomManager.receiveVideo(receiver, sender)) {
-//         return receiver + ' is now receiving video from ' + sender;
-//     }
-//     else {
-//         return 'Error: ' + receiver + ' could not receive video from ' + sender;
-//     }
-// }
+function receiveVideo(receiver, sender, sdpOffer) {
+    var error, sdpAnswer;
+    for (var room in rooms) {
+        if (room.getParticipant(receiver) && room.getParticipant(sender)) {
+            var sender = room.getParticipant(sender);
+            var receiver = room.getParticipant(receiver);
+            receiver.receiveVideoFrom(sender).processOffer(sdpOffer, function (_error, _sdpAnswer) {
+                if (_error) {
+                    error = _error;
+                    return;
+                }
+
+                sdpAnswer = _sdpAnswer;
+            });
+        }
+    }
+
+    if (error) {
+        return 'Error: ' + receiver + ' could not receive video from ' + sender;
+    }
+    else {
+        return sdpAnswer;
+    }
+}
 
 
 function leaveRoom(participantName, roomName) {
