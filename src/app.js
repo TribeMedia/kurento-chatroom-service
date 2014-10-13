@@ -51,20 +51,6 @@ var WebSocketServer = wsm.Server,
 
 wss.on('connection', function(ws) {
 
-    var sessionId = nextUniqueId();
-
-    console.log('Connection received with sessionId ' + sessionId);
-
-    ws.on('error', function(error) {
-        console.log('Connection ' + sessionId + ' error');
-        stop(sessionId);
-    });
-
-    ws.on('close', function() {
-        console.log('Connection ' + sessionId + ' closed');
-        stop(sessionId);
-    });
-
     ws.on('message', function(_message) {
         var message = JSON.parse(_message);
         console.log('Connection ' + sessionId + ' received message ', message);
