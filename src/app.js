@@ -53,7 +53,6 @@ wss.on('connection', function(ws) {
 
     ws.on('message', function(_message) {
         var message = JSON.parse(_message);
-        console.log('Connection ' + sessionId + ' received message ', message);
 
         switch (message.id) {
         case 'joinRoom':
