@@ -201,7 +201,15 @@ function addRoom(roomName) {
         return 'Error: room ' + roomName + ' already exists';
     }
 
-    var pipeline = PipelineFactory.create();
+    var pipeline = null;
+    PipelineFactory.create(function (error, _pipeline) {
+        if (error) {
+            console.log(error);
+            return error;
+        }
+
+        pipeline = _pipeline;
+    });
     var room = new Room(roomName, pipeline);
     rooms[roomName] = room;
     console.log('Room ' + roomName + ' was created');

@@ -4,26 +4,21 @@ var kurentoClient = null;
 const ws_uri = "ws://localhost:8888/kurento";
 
 
-exports.create = function () {
-    var pipeline = null;
+exports.create = function (callback) {
 
     getKurentoClient(function(error, kurentoClient){
         if(error){
-            console.log('Error getting kurentoClient');
-            return error;
+            return callback(error);
         }
         
-        kurentoClient.create('MediaPipeline', function(error, _pipeline){
+        kurentoClient.create('MediaPipeline', function(error, pipeline){
             if(error){
-                console.log('Error getting MediaPipeline');
-                return error;
+                return callback(error);
             }
 
-            pipeline = _pipeline;
+            return callback(pipeline);
         });     
     });
-
-    return pipeline;
 }
 
 //Recover kurentoClient for the first time.
