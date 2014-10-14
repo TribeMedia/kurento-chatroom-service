@@ -1,5 +1,3 @@
-
-var kurento = require('kurento-client');
 var express = require('express');
 var path = require('path');
 var wsm = require('ws');
@@ -20,8 +18,7 @@ app.set('port', process.env.PORT || 8080);
 var rooms = [],
     idCounter = 0,
     pipeline = null,
-    viewers = {},
-    kurentoClient = null;
+    viewers = {};
 
 function nextUniqueId() {
     idCounter++;
