@@ -208,6 +208,9 @@ function addRoom(roomName) {
             return error;
         }
 
+        if (!_pipeline) {
+            console.log('Error pipeline not created');
+        }
         pipeline = _pipeline;
     });
     var room = new Room(roomName, pipeline);
