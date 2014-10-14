@@ -206,6 +206,7 @@ function addRoom(roomName) {
 
     var pipeline = PipelineFactory.create();
     var room = new Room(roomName, pipeline);
+    rooms[roomName] = room;
     console.log('Room ' + roomName + ' was created');
     return 'Room ' + roomName + ' was created';
 }
