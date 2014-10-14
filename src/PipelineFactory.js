@@ -9,12 +9,14 @@ exports.create = function () {
 
     getKurentoClient(function(error, kurentoClient){
         if(error){
-            return callback(error);
+            console.log('Error getting kurentoClient');
+            return error;
         }
         
         kurentoClient.create('MediaPipeline', function(error, _pipeline){
             if(error){
-                return callback(error);
+                console.log('Error getting MediaPipeline');
+                return error;
             }
 
             pipeline = _pipeline;
