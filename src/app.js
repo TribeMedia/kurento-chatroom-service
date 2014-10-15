@@ -55,10 +55,10 @@ wss.on('connection', function(ws) {
 
         switch (message.id) {
         case 'joinRoom':
-            var participantName = message.params.participantName;
+            var username = message.params.username;
             var roomName = message.params.roomName;
 
-            var response = joinRoom(roomName, participantName);
+            var response = joinRoom(roomName, username);
             var participants = getParticipantsNames();
 
             ws.send(JSON.stringify({
