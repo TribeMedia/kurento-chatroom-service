@@ -204,30 +204,20 @@ function addRoom(roomName) {
         return 'Error: room ' + roomName + ' already exists';
     }
 
-    getKurentoClient(function(error, kurentoClient){
-        if(error){
-            return callback(error);
-        }
-        
-        kurentoClient.create('MediaPipeline', function(error, pipeline){
-            if(error){
-                return callback(error);
-            }
-
-            return callback(pipeline);
-        });     
-    });
-    PipelineFactory.create(function (error, _pipeline) {
+    getKurentoClient(function(error, kurentoClient) {
         if (error) {
-            console.log(error);
             return error;
         }
 
-        if (!_pipeline) {
-            console.log('Error pipeline not created');
-        }
-        pipeline = _pipeline;
-    });
+
+        kurentoClient.create('MediaPipeline', function(error, _pipeline) {
+            if (error) {
+                return error;
+            }
+
+            pipeline = _pipeline;
+        });
+    };
     var room = new Room(roomName, pipeline);
     rooms[roomName] = room;
     console.log('Room ' + roomName + ' was created');
