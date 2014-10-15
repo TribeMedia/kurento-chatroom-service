@@ -58,16 +58,27 @@ wss.on('connection', function(ws) {
             var username = message.params.username;
             var roomName = message.params.roomName;
 
-            var response = joinRoom(roomName, username);
-            var participants = getParticipantsNames(roomName);
-
-            ws.send(JSON.stringify({
-                id : 'joinRoomResponse',
-                response : response,
-                params : {
-                    participants : participants
+            var response = joinRoom(roomName, username, function (error, response) {
+                var message;
+                if (error) {
+                    message = {
+                        id : 'joinRoomResponse',
+                        response : error,
+                    }
                 }
-            }));
+                else {
+                    var participants = getParticipantsNames(roomName);
+                    message = {
+                        id : 'joinRoomResponse',
+                        response : response,
+                        params : {
+                            participants : participants
+                        }
+                    }
+                }
+                ws.send(JSON.stringify(message));
+            });
+
             break;
 
         case 'receiveVideoFrom':
@@ -129,22 +140,21 @@ wss.on('connection', function(ws) {
 });
 
 
-function joinRoom(roomName, participantName) {
+function joinRoom(roomName, participantName, callback) {
     if (!rooms[roomName]) {
         console.log('Room ' + roomName + ' does not exist');
         console.log('Creating room ' + roomName + '...');
         console.log(participantName);
         addRoom(roomName, function (error, room) {
             if (error) {
-                console.log(error);
-                return;
+                return callback(error);
             }
             console.log('Creating participant ' + participantName);
             if (room.addParticipant(participantName)) {
-                return participantName + ' joined room ' + roomName;
+                return callback(null, participantName + ' joined room ' + roomName);
             }
             else {
-                return 'Error: ' + participantName + ' could not join room ' + roomName;
+                return callback('Error: ' + participantName + ' could not join room ' + roomName);
             }
         });
     }
@@ -152,10 +162,10 @@ function joinRoom(roomName, participantName) {
         var room = rooms[roomName];
 
         if (room.addParticipant(participantName)) {
-            return participantName + ' joined room ' + roomName;
+            return callback(null, participantName + ' joined room ' + roomName);
         }
         else {
-            return 'Error: ' + participantName + ' could not join room ' + roomName;
+            return callback('Error: ' + participantName + ' could not join room ' + roomName);
         }
     }    
 }
