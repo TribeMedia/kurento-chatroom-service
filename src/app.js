@@ -217,7 +217,7 @@ function addRoom(roomName) {
 
             pipeline = _pipeline;
         });
-    };
+    });
     var room = new Room(roomName, pipeline);
     rooms[roomName] = room;
     console.log('Room ' + roomName + ' was created');
