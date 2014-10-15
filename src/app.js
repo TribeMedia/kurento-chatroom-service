@@ -2,12 +2,14 @@ var express = require('express');
 var path = require('path');
 var wsm = require('ws');
 
-var PipelineFactory = require('./PipelineFactory');
+var kurento = require('kurento-client');
 var Room = require('./Room').Room;
 
 var app = express();
 app.set('port', process.env.PORT || 8080);
 
+
+const ws_uri = "ws://localhost:8888/kurento";
 
 /*
  * Definition of global variables.
@@ -18,6 +20,7 @@ app.set('port', process.env.PORT || 8080);
 var rooms = [],
     idCounter = 0,
     pipeline = null,
+    kurentoClient = null,
     viewers = {};
 
 function nextUniqueId() {
@@ -201,7 +204,19 @@ function addRoom(roomName) {
         return 'Error: room ' + roomName + ' already exists';
     }
 
-    var pipeline = null;
+    getKurentoClient(function(error, kurentoClient){
+        if(error){
+            return callback(error);
+        }
+        
+        kurentoClient.create('MediaPipeline', function(error, pipeline){
+            if(error){
+                return callback(error);
+            }
+
+            return callback(pipeline);
+        });     
+    });
     PipelineFactory.create(function (error, _pipeline) {
         if (error) {
             console.log(error);
@@ -236,4 +251,23 @@ function getNParticipants(roomName) {
     }
 
     return rooms[roomName].getNParticipants();
+}
+
+
+//Recover kurentoClient for the first time.
+function getKurentoClient(callback) {
+    if (kurentoClient !== null) {
+        return callback(null, kurentoClient);
+    }
+
+    kurento(ws_uri, function(error, _kurentoClient) {
+        if (error) {
+            var message = 'Coult not find media server at address ' + ws_uri;
+            console.log(message);
+            return callback(message + ". Exiting with error " + error);
+        }
+
+        kurentoClient = _kurentoClient;
+        callback(null, kurentoClient);
+    });
 }
