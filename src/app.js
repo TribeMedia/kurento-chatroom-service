@@ -59,7 +59,7 @@ wss.on('connection', function(ws) {
             var roomName = message.params.roomName;
 
             var response = joinRoom(roomName, username);
-            var participants = getParticipantsNames();
+            var participants = getParticipantsNames(roomName);
 
             ws.send(JSON.stringify({
                 id : 'joinRoomResponse',
