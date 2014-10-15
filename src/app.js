@@ -133,6 +133,7 @@ function joinRoom(roomName, participantName) {
     if (!rooms[roomName]) {
         console.log('Room ' + roomName + ' does not exist');
         console.log('Creating room ' + roomName + '...');
+        console.log(participantName);
         addRoom(roomName, function (error, room) {
             if (error) {
                 console.log(error);
