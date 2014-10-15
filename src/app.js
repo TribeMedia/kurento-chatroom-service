@@ -19,7 +19,6 @@ const ws_uri = "ws://localhost:8888/kurento";
 
 var rooms = [],
     idCounter = 0,
-    pipeline = null,
     kurentoClient = null,
     viewers = {};
 
@@ -134,21 +133,30 @@ function joinRoom(roomName, participantName) {
     if (!rooms[roomName]) {
         console.log('Room ' + roomName + ' does not exist');
         console.log('Creating room ' + roomName + '...');
-        addRoom(roomName);
-    }
-    
+        addRoom(roomName, function (error, room) {
+            if (error) {
+                console.log(error);
+                return;
+            }
 
-    var room = rooms[roomName];
-    if (!room.pipeline) {
-        room.pipeline = pipeline;
-    };
-
-    if (room.addParticipant(participantName)) {
-        return participantName + ' joined room ' + roomName;
+            if (room.addParticipant(participantName)) {
+                return participantName + ' joined room ' + roomName;
+            }
+            else {
+                return 'Error: ' + participantName + ' could not join room ' + roomName;
+            }
+        });
     }
     else {
-        return 'Error: ' + participantName + ' could not join room ' + roomName;
-    }
+        var room = rooms[roomName];
+
+        if (room.addParticipant(participantName)) {
+            return participantName + ' joined room ' + roomName;
+        }
+        else {
+            return 'Error: ' + participantName + ' could not join room ' + roomName;
+        }
+    }    
 }
 
 
@@ -201,7 +209,7 @@ function getRooms() {
 }
 
 
-function addRoom(roomName) {
+function addRoom(roomName, callback) {
     if (rooms[roomName]) {
         console.log('Error: room ' + roomName + ' already exists');
         return 'Error: room ' + roomName + ' already exists';
@@ -221,7 +229,7 @@ function addRoom(roomName) {
             var room = new Room(roomName, pipeline);
             rooms[roomName] = room;
             console.log('Room ' + roomName + ' was created');
-            return 'Room ' + roomName + ' was created';     
+            return callback(null, room);     
         });
     });
 }
