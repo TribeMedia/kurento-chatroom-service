@@ -12,6 +12,8 @@ var Participant = function Participant(name, pipeline) {
 
             self.outgoingMedia = webRtcEndpoint;
         });
+    console.log('Participant ' + this.name + ' was created');
+    console.log(this);
 };
 
 Participant.prototype = {
