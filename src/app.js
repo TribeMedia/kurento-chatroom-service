@@ -110,7 +110,7 @@ wss.on('connection', function(ws) {
 
         case 'addRoom':
             var roomName = message.params.roomName;
-            var response = addRoom(roomName, function (error, response) {});
+            var response = addRoom(roomName);
 
             ws.send(JSON.stringify({
                 id : 'addRoomResponse',
@@ -134,16 +134,7 @@ function joinRoom(roomName, participantName) {
     if (!rooms[roomName]) {
         console.log('Room ' + roomName + ' does not exist');
         console.log('Creating room ' + roomName + '...');
-        addRoom(roomName, function (error, _pipeline) {
-            if (error) {
-                console.log(error);
-                return;
-            }
-
-            pipeline = _pipeline;
-            console.log(pipeline);
-            return;
-        });
+        addRoom(roomName);
     }
     
 
@@ -210,7 +201,7 @@ function getRooms() {
 }
 
 
-function addRoom(roomName, callback) {
+function addRoom(roomName) {
     if (rooms[roomName]) {
         console.log('Error: room ' + roomName + ' already exists');
         return 'Error: room ' + roomName + ' already exists';
@@ -222,20 +213,17 @@ function addRoom(roomName, callback) {
         }
 
 
-        kurentoClient.create('MediaPipeline', function(error, _pipeline) {
+        kurentoClient.create('MediaPipeline', function(error, pipeline) {
             if (error) {
                 return callback(error);
             }
 
-            pipeline = _pipeline;
-            callback(null, _pipeline);
+            var room = new Room(roomName, pipeline);
+            rooms[roomName] = room;
+            console.log('Room ' + roomName + ' was created');
+            return 'Room ' + roomName + ' was created';     
         });
     });
-
-    var room = new Room(roomName, pipeline);
-    rooms[roomName] = room;
-    console.log('Room ' + roomName + ' was created');
-    return 'Room ' + roomName + ' was created';
 }
 
 
