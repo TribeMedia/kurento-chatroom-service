@@ -3,15 +3,15 @@ var Participant = function Participant(name, pipeline) {
     this.name = name;
     this.outgoingMedia = null;
     this.incomingMedia = [];
-    
+    var self = this;
     this.pipeline.create('WebRtcEndpoint',
         function(error, webRtcEndpoint) {
             if (error) {
                 console.log(error);
             }
 
-            this.outgoingMedia = webRtcEndpoint;
-        }).bind(this);
+            self.outgoingMedia = webRtcEndpoint;
+        });
 };
 
 Participant.prototype = {
