@@ -121,6 +121,7 @@ wss.on('connection', function(ws) {
                 id : 'leaveRoomResponse',
                 response : response
             }));
+
             break;
 
         case 'getRooms':
@@ -132,16 +133,26 @@ wss.on('connection', function(ws) {
             }));
 
             break;
-        // TODO add callback
+        
         case 'addRoom':
             var roomName = message.params.roomName;
-            var response = addRoom(roomName);
+            var response = addRoom(roomName, function (error, room) {
+                var message;
 
-            ws.send(JSON.stringify({
-                id : 'addRoomResponse',
-                response : response
-            }));
-
+                if (error) {
+                    message = {
+                        id: 'addRoomResponse',
+                        response: error
+                    };
+                }
+                else {
+                    message = {
+                        id: 'addRoomResponse',
+                        response: 'Room ' + room.roomName + ' was created'
+                    };
+                }
+                ws.send(JSON.stringify(message));
+            });
             break;
 
         default:
