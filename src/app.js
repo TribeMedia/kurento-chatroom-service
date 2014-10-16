@@ -60,11 +60,12 @@ wss.on('connection', function(ws) {
 
             var response = joinRoom(roomName, username, function (error, response) {
                 var message;
+
                 if (error) {
                     message = {
                         id : 'joinRoomResponse',
                         response : error,
-                    }
+                    };
                 }
                 else {
                     var participants = getParticipantsNames(roomName);
@@ -74,7 +75,7 @@ wss.on('connection', function(ws) {
                         params : {
                             participants : participants
                         }
-                    }
+                    };
                 }
                 ws.send(JSON.stringify(message));
             });
@@ -86,15 +87,29 @@ wss.on('connection', function(ws) {
             var sender = message.params.sender;
             var sdpOffer = message.params.sdpOffer;
 
-            var sdpAnswer = receiveVideo(receiver, sender, sdpOffer);
-
-            ws.send(JSON.stringify({
-                id : 'receiveVideoResponse',
-                params: {
-                    spdAnswer : sdpAnswer,
-                    sender: sender
+            var sdpAnswer = receiveVideo(receiver, sender, sdpOffer, function (error, sdpAnswer) {
+                var message;
+                
+                if (error) {
+                    message = {
+                        id: 'receiveVideoResponse',
+                        response: error
+                    };
                 }
-            }));
+                else {
+                    message = {
+                        id: 'receiveVideoResponse',
+                        response: receiver + ' receiving video from ' + sender,
+                        params: {
+                            sender: sender,
+                            sdpAnswer: sdpAnswer
+                        }
+                    };
+                }
+
+                ws.send(JSON.stringify(message));
+            });
+
             break;
 
         case 'leaveRoom':
@@ -117,7 +132,7 @@ wss.on('connection', function(ws) {
             }));
 
             break;
-
+        // TODO add callback
         case 'addRoom':
             var roomName = message.params.roomName;
             var response = addRoom(roomName);
@@ -144,7 +159,6 @@ function joinRoom(roomName, participantName, callback) {
     if (!rooms[roomName]) {
         console.log('Room ' + roomName + ' does not exist');
         console.log('Creating room ' + roomName + '...');
-        console.log(participantName);
         addRoom(roomName, function (error, room) {
             if (error) {
                 return callback(error);
@@ -171,28 +185,25 @@ function joinRoom(roomName, participantName, callback) {
 }
 
 
-function receiveVideo(receiver, sender, sdpOffer) {
-    var error, sdpAnswer;
+function receiveVideo(receiver, sender, sdpOffer, callback) {
     for (var room in rooms) {
         if (rooms[room].getParticipant(receiver) && rooms[room].getParticipant(sender)) {
             var sender = rooms[room].getParticipant(sender);
             var receiver = rooms[room].getParticipant(receiver);
-            receiver.receiveVideoFrom(sender).processOffer(sdpOffer, function (_error, _sdpAnswer) {
-                if (_error) {
-                    error = _error;
-                    return;
+            receiver.receiveVideoFrom(sender, function (error, webRtcEndpoint) {
+                if (error) {
+                    return callback(error);
                 }
 
-                sdpAnswer = _sdpAnswer;
+                webRtcEndpoint.processOffer(sdpOffer, function (error, sdpAnswer) {
+                    if (error) {
+                        return callback(error);
+                    }
+
+                    return callback(null, sdpAnswer);
+                });
             });
         }
-    }
-
-    if (error) {
-        return 'Error: ' + receiver + ' could not receive video from ' + sender;
-    }
-    else {
-        return sdpAnswer;
     }
 }
 

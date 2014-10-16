@@ -21,22 +21,21 @@ Participant.prototype = {
     constructor: Participant,
 
 
-    receiveVideoFrom: function (sender) {
+    receiveVideoFrom: function (sender, callback) {
         if (sender === null) {
-            console.log('Error: Invalid argument.')
+            return callback('Error: Invalid argument.');
         }
 
         if (sender.name === this.name) {
             console.log('Configuring loopback...');
-            return this.outgoingMedia
+            return callback(null, this.outgoingMedia);
         }
 
         console.log('PARTICIPANT ' + this.name + ': receiving video from ' + sender.name);
 
-        var incoming;
-
         if (this.incomingMedia[sender.name]) {
-            incoming = this.incomingMedia[sender.name]
+            incoming = this.incomingMedia[sender.name];
+            sender.outgoingMedia.connect(incoming);
         }
         else {
             console.log('PARTICIPANT ' + this.name + ': creating new endpoint for ' + sender.name);
@@ -44,19 +43,15 @@ Participant.prototype = {
             this.pipeline.create('WebRtcEndpoint',
             function(error, webRtcEndpoint) {
                 if (error) {
-                    console.log(error);
+                    return callback(error);
                 }
 
-                incoming = webRtcEndpoint;
-            }).bind(this);
-
-            this.incomingMedia[sender.name] = incoming;
+                this.incomingMedia[sender.name] = webRtcEndpoint;
+                console.log('PARTICIPANT ' + this.name + ': obtained endpoint for ' + sender.name);
+                sender.outgoingMedia.connect(incoming);
+                return callback(null, webRtcEndpoint);
+            });
         }
-
-        console.log('PARTICIPANT ' + this.name + ': obtained endpoint for ' + sender.name);
-        sender.outgoingMedia.connect(incoming);
-
-        return incoming;
     },
 
 
