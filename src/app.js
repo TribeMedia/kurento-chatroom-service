@@ -174,9 +174,9 @@ function joinRoom(roomName, participantName, callback) {
 function receiveVideo(receiver, sender, sdpOffer) {
     var error, sdpAnswer;
     for (var room in rooms) {
-        if (room.getParticipant(receiver) && room.getParticipant(sender)) {
-            var sender = room.getParticipant(sender);
-            var receiver = room.getParticipant(receiver);
+        if (rooms[room].getParticipant(receiver) && rooms[room].getParticipant(sender)) {
+            var sender = rooms[room].getParticipant(sender);
+            var receiver = rooms[room].getParticipant(receiver);
             receiver.receiveVideoFrom(sender).processOffer(sdpOffer, function (_error, _sdpAnswer) {
                 if (_error) {
                     error = _error;
