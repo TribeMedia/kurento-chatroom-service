@@ -205,7 +205,7 @@ function leaveRoom(participantName, roomName) {
 
     var room = rooms[roomName];
 
-    if (room.getParticipant(participantName)) {
+    if (room.removeParticipant(participantName)) {
         console.log(participantName + ' left the room ' + roomName);
         return participantName + ' left the room ' + roomName;
     }
