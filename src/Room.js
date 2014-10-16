@@ -12,11 +12,15 @@ Room.prototype = {
 
 
 	addParticipant: function (participantName) {
-		var sender = new Participant(participantName, this.pipeline);
+		if (this.participants[participantName]) {
+			console.log(participantName + ' is already in the room ' + this.roomName);
+			return this.participants[participantName];
+		}
 
+		var sender = new Participant(participantName, this.pipeline);
 		console.log('Connecting ' + sender.name + ' with peers');
 		for (var participant in this.participants) {
-			participant.receiveVideoFrom(sender);
+			this.participants[participant].receiveVideoFrom(sender);
 		}
 
 		this.participants[participantName] = sender;
