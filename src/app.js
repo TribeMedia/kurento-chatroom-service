@@ -205,21 +205,23 @@ function receiveVideo(receiver, sender, sdpOffer, callback) {
         }
     }
 
-    var sender = rooms[roomName].getParticipant(sender);
-    var receiver = rooms[roomName].getParticipant(receiver);
-    receiver.receiveVideoFrom(sender, function (error, webRtcEndpoint) {
-        if (error) {
-            return callback(error);
-        }
-
-        webRtcEndpoint.processOffer(sdpOffer, function (error, sdpAnswer) {
+    if (roomName) {
+        var sender = rooms[roomName].getParticipant(sender);
+        var receiver = rooms[roomName].getParticipant(receiver);
+        receiver.receiveVideoFrom(sender, function (error, webRtcEndpoint) {
             if (error) {
                 return callback(error);
             }
 
-            return callback(null, sdpAnswer);
+            webRtcEndpoint.processOffer(sdpOffer, function (error, sdpAnswer) {
+                if (error) {
+                    return callback(error);
+                }
+
+                return callback(null, sdpAnswer);
+            });
         });
-    });
+    }
 }
 
 
