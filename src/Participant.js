@@ -50,7 +50,7 @@ Participant.prototype = {
                 console.log('PARTICIPANT ' + this.name + ': obtained endpoint for ' + sender.name);
                 sender.outgoingMedia.connect(incoming);
                 return callback(null, webRtcEndpoint);
-            });
+            }.bind(this));
         }
     },
 
