@@ -64,6 +64,11 @@ Participant.prototype = {
         }
 
         if (!this.incomingMedia[senderName]) {
+            console.log('Error: No connected with ' + senderName);
+            return;
+        }
+
+        if (!this.incomingMedia[senderName]) {
             console.log(senderName + ' is not connected to ' + this.name);
         }
 

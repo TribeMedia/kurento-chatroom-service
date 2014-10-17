@@ -214,6 +214,8 @@ function receiveVideo(receiver, sender, sdpOffer, callback) {
                     return callback(null, sdpAnswer);
                 });
             });
+
+            break;
         }
     }
 }
