@@ -72,7 +72,7 @@ Room.prototype = {
 	shutdown: function () {
 		for (participant in this.participants) {
 			this.participants[participant].close();
-			thia.participants[participant] = null;
+			this.participants[participant] = null;
 		}
 	}
 };
