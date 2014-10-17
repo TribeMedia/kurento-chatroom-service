@@ -197,27 +197,29 @@ function joinRoom(roomName, participantName, callback) {
 
 
 function receiveVideo(receiver, sender, sdpOffer, callback) {
+    var roomName;
     for (var room in rooms) {
         if (rooms[room].getParticipant(receiver) && rooms[room].getParticipant(sender)) {
-            var sender = rooms[room].getParticipant(sender);
-            var receiver = rooms[room].getParticipant(receiver);
-            receiver.receiveVideoFrom(sender, function (error, webRtcEndpoint) {
-                if (error) {
-                    return callback(error);
-                }
-
-                webRtcEndpoint.processOffer(sdpOffer, function (error, sdpAnswer) {
-                    if (error) {
-                        return callback(error);
-                    }
-
-                    return callback(null, sdpAnswer);
-                });
-            });
-
+            roomName = room;
             break;
         }
     }
+
+    var sender = rooms[roomName].getParticipant(sender);
+    var receiver = rooms[roomName].getParticipant(receiver);
+    receiver.receiveVideoFrom(sender, function (error, webRtcEndpoint) {
+        if (error) {
+            return callback(error);
+        }
+
+        webRtcEndpoint.processOffer(sdpOffer, function (error, sdpAnswer) {
+            if (error) {
+                return callback(error);
+            }
+
+            return callback(null, sdpAnswer);
+        });
+    });
 }
 
 

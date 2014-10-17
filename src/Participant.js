@@ -41,8 +41,7 @@ Participant.prototype = {
         else {
             console.log('PARTICIPANT ' + this.name + ': creating new endpoint for ' + sender.name);
             var self = this;
-            this.pipeline.create('WebRtcEndpoint',
-            function(error, webRtcEndpoint) {
+            this.pipeline.create('WebRtcEndpoint', function(error, webRtcEndpoint) {
                 if (error) {
                     return callback(error);
                 }
@@ -64,7 +63,7 @@ Participant.prototype = {
         }
 
         if (!this.incomingMedia[senderName]) {
-            console.log('Error: No connected with ' + senderName);
+            console.log('Error: Not connected with ' + senderName);
             return;
         }
 
