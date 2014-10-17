@@ -31,6 +31,7 @@ Participant.prototype = {
             return callback(null, this.outgoingMedia);
         }
 
+        var incoming;
         console.log('PARTICIPANT ' + this.name + ': receiving video from ' + sender.name);
 
         if (this.incomingMedia[sender.name]) {
@@ -45,10 +46,10 @@ Participant.prototype = {
                 if (error) {
                     return callback(error);
                 }
-                console.log(this);
+
                 this.incomingMedia[sender.name] = webRtcEndpoint;
                 console.log('PARTICIPANT ' + this.name + ': obtained endpoint for ' + sender.name);
-                sender.outgoingMedia.connect(incoming);
+                sender.outgoingMedia.connect(webRtcEndpoint);
                 return callback(null, webRtcEndpoint);
             }.bind(this));
         }
