@@ -40,18 +40,18 @@ Participant.prototype = {
         }
         else {
             console.log('PARTICIPANT ' + this.name + ': creating new endpoint for ' + sender.name);
-            
+            var self = this;
             this.pipeline.create('WebRtcEndpoint',
             function(error, webRtcEndpoint) {
                 if (error) {
                     return callback(error);
                 }
 
-                this.incomingMedia[sender.name] = webRtcEndpoint;
-                console.log('PARTICIPANT ' + this.name + ': obtained endpoint for ' + sender.name);
+                self.incomingMedia[sender.name] = webRtcEndpoint;
+                console.log('PARTICIPANT ' + self.name + ': obtained endpoint for ' + sender.name);
                 sender.outgoingMedia.connect(webRtcEndpoint);
                 return callback(null, webRtcEndpoint);
-            }.bind(this));
+            });
         }
     },
 
