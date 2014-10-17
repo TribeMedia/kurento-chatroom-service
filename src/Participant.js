@@ -45,7 +45,7 @@ Participant.prototype = {
                 if (error) {
                     return callback(error);
                 }
-
+                console.log(this);
                 this.incomingMedia[sender.name] = webRtcEndpoint;
                 console.log('PARTICIPANT ' + this.name + ': obtained endpoint for ' + sender.name);
                 sender.outgoingMedia.connect(incoming);
@@ -77,7 +77,7 @@ Participant.prototype = {
     close: function () {
         console.log('PARTICIPANT ' + this.name + ' is releasing incoming media');
         for (var incoming in this.incomingMedia) {
-            incoming.release();
+            this.incomingMedia[incoming].release();
         }
 
         console.log('PARTICIPANT ' + this.name + ' is releasing outgoing media')
