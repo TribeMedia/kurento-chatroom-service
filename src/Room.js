@@ -41,7 +41,7 @@ Room.prototype = {
 
 		console.log('Peers cancelling video from ' + participantName);
 		for (var peer in this.participants) {
-			peer.cancelVideoFrom(participantName);
+			this.participants[peer].cancelVideoFrom(participantName);
 		}
 		return participant.name;
 	},
@@ -50,7 +50,7 @@ Room.prototype = {
 	getParticipantsNames: function () {
 		var participantNames = [];
 		for (participant in this.participants){
-			participantNames.push(participant.name);
+			participantNames.push(this.participants[participant.name]);
 		}
 		return participantNames;
 	},
@@ -71,8 +71,8 @@ Room.prototype = {
 
 	shutdown: function () {
 		for (participant in this.participants) {
-			participant.close();
-			participant = null;
+			this.participants[participant].close();
+			thia.participants[participant] = null;
 		}
 	}
 };
