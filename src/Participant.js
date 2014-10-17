@@ -58,7 +58,7 @@ Participant.prototype = {
 
     cancelVideoFrom: function (senderName) {
 
-        if (sender === null) {
+        if (senderName === null) {
             console.log('Error: Invalid argument.');
             return;
         }
@@ -67,7 +67,7 @@ Participant.prototype = {
             console.log(senderName + ' is not connected to ' + this.name);
         }
 
-        console.log('PARTICIPANT ' + this.name + ': canceling video reception from ' + sender.name);
+        console.log('PARTICIPANT ' + this.name + ': canceling video reception from ' + senderName);
         this.incomingMedia[senderName].release();
         delete this.incomingMedia[senderName];
 
