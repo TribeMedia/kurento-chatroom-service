@@ -85,6 +85,9 @@ wss.on('connection', function(ws) {
             var receiver = message.params.receiver;
             var sender = message.params.sender;
             var sdpOffer = message.params.sdpOffer;
+            console.log('Sender: ' + sender);
+            console.log('Receiver: ' + receiver);
+            console.log('sdpOffer: ' + sdpOffer);
 
             var sdpAnswer = receiveVideo(receiver, sender, sdpOffer, function (error, sdpAnswer) {
                 var message;
@@ -201,7 +204,7 @@ function receiveVideo(receiver, sender, sdpOffer, callback) {
     console.log('Sender: ' + sender);
     console.log('Receiver: ' + receiver);
     for (var room in rooms) {
-        console.log(rooms[room].roomName + '. Participants ' + rooms[room].participants)
+        console.log(rooms[room].roomName + ': Participants: ' + rooms[room].participants)
         if (rooms[room].getParticipant(receiver) && rooms[room].getParticipant(sender)) {
             roomName = room;
             break;
