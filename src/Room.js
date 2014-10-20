@@ -1,7 +1,7 @@
 var Participant = require('./Participant').Participant;
 
 var Room = function Room(roomName, pipeline) {
-	this.participants = [];
+	this.participants = {};
 	this.roomName = roomName;
 	this.pipeline = pipeline;
 };
@@ -65,7 +65,11 @@ Room.prototype = {
 
 
 	getNParticipants: function () {
-		return this.participants.length;
+		var nParticipants = 0;
+		for (participant in this.participants) {
+			nParticipants++;
+		}
+		return nParticipants;
 	},
 
 
