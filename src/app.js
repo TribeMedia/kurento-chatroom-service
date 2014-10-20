@@ -17,7 +17,7 @@ const ws_uri = "ws://localhost:8888/kurento";
 
 // TODO  handle sessions
 
-var rooms = [],
+var rooms = {},
     idCounter = 0,
     kurentoClient = null;
 
