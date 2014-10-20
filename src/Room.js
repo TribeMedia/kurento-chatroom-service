@@ -61,7 +61,7 @@ Room.prototype = {
 		if (!this.participants[participantName]) {
 			return null;
 		}
-		return this.participants[participantName].name;
+		return this.participants[participantName];
 	},
 
 
