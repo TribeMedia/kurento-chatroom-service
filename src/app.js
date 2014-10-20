@@ -197,11 +197,11 @@ function joinRoom(roomName, participantName, callback) {
 
 function receiveVideo(receiver, sender, sdpOffer, callback) {
     var roomName;
-    console.log('Rooms: ' + rooms);
+    console.log('Number of rooms: ' + rooms.length);
     console.log('Sender: ' + sender);
     console.log('Receiver: ' + receiver);
     for (var room in rooms) {
-        console.log(rooms[room] + ': ' + rooms[room].participants)
+        console.log(rooms[room].roomName + '. Participants ' + rooms[room].participants)
         if (rooms[room].getParticipant(receiver) && rooms[room].getParticipant(sender)) {
             roomName = room;
             break;
@@ -209,9 +209,9 @@ function receiveVideo(receiver, sender, sdpOffer, callback) {
     }
 
     if (roomName) {
-        var sender = rooms[roomName].getParticipant(sender);
-        var receiver = rooms[roomName].getParticipant(receiver);
-        receiver.receiveVideoFrom(sender, function (error, webRtcEndpoint) {
+        var senderObj = rooms[roomName].getParticipant(sender);
+        var receiverObj = rooms[roomName].getParticipant(receiver);
+        receiverObj.receiveVideoFrom(senderObj, function (error, webRtcEndpoint) {
             if (error) {
                 return callback(error);
             }
