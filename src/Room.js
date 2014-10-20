@@ -52,6 +52,7 @@ Room.prototype = {
 		for (var participant in this.participants){
 			participantNames.push(this.participants[participant.name]);
 		}
+		console.log('getParticipantsNames return: ' + participantNames)
 		return participantNames;
 	},
 
