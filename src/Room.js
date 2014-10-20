@@ -52,7 +52,7 @@ Room.prototype = {
 		for (var participant in this.participants){
 			participantNames.push(this.participants[participant.name]);
 		}
-		console.log('getParticipantsNames return: ' + participantNames)
+		console.log('getParticipantsNames return: ' + participantNames);
 		return participantNames;
 	},
 
@@ -67,7 +67,7 @@ Room.prototype = {
 
 	getNParticipants: function () {
 		var nParticipants = 0;
-		for (participant in this.participants) {
+		for (var participant in this.participants) {
 			nParticipants++;
 		}
 		return nParticipants;
