@@ -214,6 +214,8 @@ function receiveVideo(receiver, sender, sdpOffer, callback) {
     if (roomName) {
         var senderObj = rooms[roomName].getParticipant(sender);
         var receiverObj = rooms[roomName].getParticipant(receiver);
+        console.log('ReceiverObj: ' + receiverObj);
+        console.log('SenderObj' + senderObj);
         receiverObj.receiveVideoFrom(senderObj, function (error, webRtcEndpoint) {
             if (error) {
                 return callback(error);
