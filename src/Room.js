@@ -49,7 +49,7 @@ Room.prototype = {
 
 	getParticipantsNames: function () {
 		var participantNames = [];
-		for (participant in this.participants){
+		for (var participant in this.participants){
 			participantNames.push(this.participants[participant.name]);
 		}
 		return participantNames;
@@ -74,7 +74,7 @@ Room.prototype = {
 
 
 	shutdown: function () {
-		for (participant in this.participants) {
+		for (var participant in this.participants) {
 			this.participants[participant].close();
 			this.participants[participant] = null;
 		}
