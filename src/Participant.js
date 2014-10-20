@@ -25,7 +25,7 @@ Participant.prototype = {
         if (sender === null) {
             return callback('Error: Invalid argument.');
         }
-
+        console.log('Sender: ' + sender);
         if (sender.name === this.name) {
             console.log('Configuring loopback...');
             return callback(null, this.outgoingMedia);

@@ -19,8 +19,7 @@ const ws_uri = "ws://localhost:8888/kurento";
 
 var rooms = [],
     idCounter = 0,
-    kurentoClient = null,
-    viewers = {};
+    kurentoClient = null;
 
 function nextUniqueId() {
     idCounter++;
@@ -198,7 +197,11 @@ function joinRoom(roomName, participantName, callback) {
 
 function receiveVideo(receiver, sender, sdpOffer, callback) {
     var roomName;
+    console.log('Rooms: ' + rooms);
+    console.log('Sender: ' + sender);
+    console.log('Receiver: ' + receiver);
     for (var room in rooms) {
+        console.log(rooms[room] + ': ' + rooms[room].participants)
         if (rooms[room].getParticipant(receiver) && rooms[room].getParticipant(sender)) {
             roomName = room;
             break;
