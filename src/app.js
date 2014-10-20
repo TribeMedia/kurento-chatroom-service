@@ -200,7 +200,7 @@ function joinRoom(roomName, participantName, callback) {
 
 function receiveVideo(receiver, sender, sdpOffer, callback) {
     var roomName;
-    console.log('Number of rooms: ' + rooms.length);
+    console.log('Rooms: ' + rooms);
     console.log('Sender: ' + sender);
     console.log('Receiver: ' + receiver);
     for (var room in rooms) {
