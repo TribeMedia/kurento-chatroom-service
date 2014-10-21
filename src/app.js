@@ -6,7 +6,7 @@ var kurento = require('kurento-client');
 var Room = require('./Room').Room;
 
 var app = express();
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 8081);
 
 
 const ws_uri = "ws://localhost:8888/kurento";
@@ -39,7 +39,7 @@ var server = app.listen(port, '0.0.0.0', function() {
 var WebSocketServer = wsm.Server,
     wss = new WebSocketServer({
         server : server,
-        path : '/call'
+        path : '/chatroom'
     });
 
 
