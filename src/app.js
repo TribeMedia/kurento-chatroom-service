@@ -39,7 +39,7 @@ var server = app.listen(port, '0.0.0.0', function() {
 var WebSocketServer = wsm.Server,
     wss = new WebSocketServer({
         server : server,
-        path : '/chatroom'
+        path : '/call'
     });
 
 
