@@ -317,6 +317,7 @@ function getKurentoClient(callback) {
 }
 
 function sendNotification(roomName, participantName, notificationType) {
+    console.log('Sending the following notification to participants of room ' + roomName);
     var room = rooms[roomName];
     var message = {
         id: notificationType,
@@ -324,9 +325,11 @@ function sendNotification(roomName, participantName, notificationType) {
             participantName: participantName
         }
     };
+    console.log(message);
     for (participant in room.participants) {
         if (participant !== participantName) {
             room.participants[participant].ws.send(JSON.stringify(message));
+            console.log('Notification sent to participant ' + participant);
         }
     }
 }
