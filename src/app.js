@@ -174,7 +174,7 @@ function joinRoom(roomName, participantName, ws, callback) {
                 return callback(error);
             }
             console.log('Creating participant ' + participantName);
-            if (room.addParticipant(participantName)) {
+            if (room.addParticipant(participantName, ws)) {
                 return callback(null, participantName + ' joined room ' + roomName);
             }
             else {
