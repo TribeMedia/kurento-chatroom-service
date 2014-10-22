@@ -326,7 +326,7 @@ function sendNotification(roomName, participantName, notificationType) {
     };
     for (participant in room.participants) {
         if (participant !== participantName) {
-            room.participants[participant].ws.send(JSONSringify(message));
+            room.participants[participant].ws.send(JSON.stringify(message));
         }
     }
 }
