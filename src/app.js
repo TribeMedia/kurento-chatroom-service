@@ -18,13 +18,7 @@ const ws_uri = "ws://localhost:8888/kurento";
 // TODO  handle sessions
 
 var rooms = {},
-    idCounter = 0,
     kurentoClient = null;
-
-function nextUniqueId() {
-    idCounter++;
-    return idCounter.toString();
-}
 
 /*
  * Server startup
@@ -57,7 +51,7 @@ wss.on('connection', function(ws) {
             var username = message.params.username;
             var roomName = message.params.roomName;
 
-            var response = joinRoom(roomName, username, function (error, response) {
+            var response = joinRoom(roomName, username, ws, function (error, response) {
                 var message;
 
                 if (error) {
@@ -77,6 +71,7 @@ wss.on('connection', function(ws) {
                     };
                 }
                 ws.send(JSON.stringify(message));
+                sendNotification(roomName, username, 'participantJoin');
             });
 
             break;
@@ -124,6 +119,8 @@ wss.on('connection', function(ws) {
                 response : response
             }));
 
+            sendNotification(roomName, participantName, 'participantLeft');
+
             break;
 
         case 'getRooms':
@@ -168,7 +165,7 @@ wss.on('connection', function(ws) {
 });
 
 
-function joinRoom(roomName, participantName, callback) {
+function joinRoom(roomName, participantName, ws, callback) {
     if (!rooms[roomName]) {
         console.log('Room ' + roomName + ' does not exist');
         console.log('Creating room ' + roomName + '...');
@@ -188,7 +185,7 @@ function joinRoom(roomName, participantName, callback) {
     else {
         var room = rooms[roomName];
 
-        if (room.addParticipant(participantName)) {
+        if (room.addParticipant(participantName, ws)) {
             return callback(null, participantName + ' joined room ' + roomName);
         }
         else {
@@ -317,4 +314,19 @@ function getKurentoClient(callback) {
         kurentoClient = _kurentoClient;
         callback(null, kurentoClient);
     });
+}
+
+function sendNotification(roomName, participantName, notificationType) {
+    var room = rooms[roomName];
+    var message = {
+        id: notificationType,
+        params: {
+            participantName: participantName
+        }
+    };
+    for (participant in room.participants) {
+        if (participant !== participantName) {
+            room.participants[participant].ws.send(JSONSringify(message));
+        }
+    }
 }

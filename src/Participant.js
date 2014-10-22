@@ -1,4 +1,5 @@
-var Participant = function Participant(name, pipeline) {
+var Participant = function Participant(name, pipeline, ws) {
+    this.ws = ws;
     this.pipeline = pipeline;
     this.name = name;
     this.outgoingMedia = null;
