@@ -363,22 +363,31 @@ function sendNotification(roomName, participantName, notificationType) {
 }
 
 function startSend(sender, sdpOffer, callback) {
-    var room = rooms[roomName];
-    var senderObj = room.getParticipant(sender);
-
-    senderObj.startSend(sdpOffer, function (error, sdpAnswer) {
-        if (error) {
-            return callback(error);
+    var roomName;
+    for (var room in rooms) {
+        if (rooms[room].getParticipant(sender)) {
+            roomName = room;
+            break;
         }
+    }
 
-        console.log('Sdp answer obtained for ' + sender + ' outgoing media');
+    if (roomName) {
+        var senderObj = rooms[roomName].getParticipant(sender);
 
-        webRtcEndpoint.processOffer(sdpOffer, function (error, sdpAnswer) {
+        senderObj.startSend(sdpOffer, function (error, sdpAnswer) {
             if (error) {
                 return callback(error);
             }
 
-            return callback(null, sdpAnswer);
+            console.log('Sdp answer obtained for ' + sender + ' outgoing media');
+
+            webRtcEndpoint.processOffer(sdpOffer, function (error, sdpAnswer) {
+                if (error) {
+                    return callback(error);
+                }
+
+                return callback(null, sdpAnswer);
+            });
         });
-    });
+    }
 }
