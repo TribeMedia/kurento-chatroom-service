@@ -28,8 +28,11 @@ Participant.prototype = {
 
 
     receiveVideoFrom: function (sender, callback) {
-        if (sender === null) {
+        if (!sender) {
             return callback('Error: Invalid argument.');
+        }
+        if (!sender.outgoingMedia) {
+            return callback('Error: ' + sender.name + ' cannot send video.')
         }
         console.log('Sender: ' + sender);
         if (sender.name === this.name) {
