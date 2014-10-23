@@ -15,6 +15,7 @@ Participant.prototype = {
 
 
     startSend: function (callback) {
+        var self = this;
         this.pipeline.create('WebRtcEndpoint', function(error, webRtcEndpoint) {
             if (error) {
                 console.log(error);
