@@ -5,14 +5,6 @@ var Participant = function Participant(name, pipeline, ws) {
     this.outgoingMedia = null;
     this.incomingMedia = [];
     var self = this;
-    this.pipeline.create('WebRtcEndpoint',
-        function(error, webRtcEndpoint) {
-            if (error) {
-                console.log(error);
-            }
-
-            self.outgoingMedia = webRtcEndpoint;
-        });
     console.log('Participant ' + this.name + ' was created');
     console.log(this);
 };
@@ -20,6 +12,18 @@ var Participant = function Participant(name, pipeline, ws) {
 Participant.prototype = {
     
     constructor: Participant,
+
+
+    startSend: function (callback) {
+        this.pipeline.create('WebRtcEndpoint', function(error, webRtcEndpoint) {
+            if (error) {
+                console.log(error);
+            }
+
+            self.outgoingMedia = webRtcEndpoint;
+            return callback(null, webRtcEndpoint);
+        });
+    },
 
 
     receiveVideoFrom: function (sender, callback) {

@@ -154,6 +154,33 @@ wss.on('connection', function(ws) {
             });
             break;
 
+        case 'startSend':
+            var sender = message.params.sender;
+            var sdpOffer = message.params.sdpOffer;
+
+            startSend(sender, sdpOffer, function (error, sdpAnswer) {
+                var message;
+                
+                if (error) {
+                    message = {
+                        id: 'startSendResponse',
+                        response: error
+                    };
+                }
+                else {
+                    message = {
+                        id: 'startSendResponse',
+                        response: sender + ' outgoing media started.',
+                        params: {
+                            sdpAnswer: sdpAnswer
+                        }
+                    };
+                }
+
+                ws.send(JSON.stringify(message));
+            });
+            break;
+
         default:
             ws.send(JSON.stringify({
                 id : 'error',
@@ -332,4 +359,23 @@ function sendNotification(roomName, participantName, notificationType) {
             console.log('Notification sent to participant ' + participant);
         }
     }
+}
+
+function startSend(sender, sdpOffer, callback) {
+    var room = rooms[roomName];
+    var senderObj = room.getParticipant(sender);
+
+    senderObj.startSend(sdpOffer, function (error, sdpAnswer) {
+        if (error) {
+            return callback(error);
+        }
+
+        webRtcEndpoint.processOffer(sdpOffer, function (error, sdpAnswer) {
+            if (error) {
+                return callback(error);
+            }
+
+            return callback(null, sdpAnswer);
+        });
+    });
 }
