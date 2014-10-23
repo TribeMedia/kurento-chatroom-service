@@ -157,6 +157,7 @@ wss.on('connection', function(ws) {
         case 'startSend':
             var sender = message.params.sender;
             var sdpOffer = message.params.sdpOffer;
+            console.log('Starting outgoing media of ' + sender);
 
             startSend(sender, sdpOffer, function (error, sdpAnswer) {
                 var message;
@@ -369,6 +370,8 @@ function startSend(sender, sdpOffer, callback) {
         if (error) {
             return callback(error);
         }
+
+        console.log('Sdp answer obtained for ' + sender + ' outgoing media');
 
         webRtcEndpoint.processOffer(sdpOffer, function (error, sdpAnswer) {
             if (error) {
