@@ -374,7 +374,7 @@ function startSend(sender, sdpOffer, callback) {
     if (roomName) {
         var senderObj = rooms[roomName].getParticipant(sender);
 
-        senderObj.startSend(sdpOffer, function (error, sdpAnswer) {
+        senderObj.startSend(function (error, sdpAnswer) {
             if (error) {
                 return callback(error);
             }
