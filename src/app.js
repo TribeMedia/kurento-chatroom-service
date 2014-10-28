@@ -71,6 +71,7 @@ wss.on('connection', function(ws) {
                     };
                 }
                 ws.send(JSON.stringify(message));
+                // TODO do not send notification when an error occured
                 sendNotification(roomName, username, 'participantJoin');
             });
 
@@ -287,7 +288,7 @@ function addRoom(roomName, callback) {
         return 'Error: room ' + roomName + ' already exists';
     }
 
-    getKurentoClient(function(error, kurentoClient) {
+    getKurentoClient(function (error, kurentoClient) {
         if (error) {
             return callback(error);
         }
@@ -334,7 +335,7 @@ function getKurentoClient(callback) {
 
     kurento(ws_uri, function(error, _kurentoClient) {
         if (error) {
-            var message = 'Coult not find media server at address ' + ws_uri;
+            var message = 'Could not find media server at address ' + ws_uri;
             console.log(message);
             return callback(message + ". Exiting with error " + error);
         }
