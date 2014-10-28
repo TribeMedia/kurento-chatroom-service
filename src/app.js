@@ -355,7 +355,7 @@ function sendNotification(roomName, participantName, notificationType) {
         }
     };
     console.log(message);
-    for (participant in room.participants) {
+    for (var participant in room.participants) {
         if (participant !== participantName) {
             room.participants[participant].ws.send(JSON.stringify(message));
             console.log('Notification sent to participant ' + participant);
