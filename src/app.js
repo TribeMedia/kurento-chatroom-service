@@ -71,6 +71,7 @@ wss.on('connection', function(ws) {
                     };
                 }
                 ws.send(JSON.stringify(message));
+                sendNotification(roomName, username, 'participantJoin');
             });
 
             break;
