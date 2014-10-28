@@ -18,11 +18,6 @@ Room.prototype = {
         }
 
         var sender = new Participant(participantName, this.pipeline, ws);
-        // console.log('Connecting ' + sender.name + ' with peers');
-        // for (var participant in this.participants) {
-        //  this.participants[participant].receiveVideoFrom(sender);
-        // }
-
         this.participants[participantName] = sender;
         return sender;
     },

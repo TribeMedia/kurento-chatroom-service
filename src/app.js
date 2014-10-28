@@ -71,8 +71,6 @@ wss.on('connection', function(ws) {
                     };
                 }
                 ws.send(JSON.stringify(message));
-                // TODO do not send notification when an error occured
-                sendNotification(roomName, username, 'participantJoin');
             });
 
             break;
@@ -180,6 +178,14 @@ wss.on('connection', function(ws) {
                 }
 
                 ws.send(JSON.stringify(message));
+                var roomName;
+                for (var room in rooms) {
+                    if (rooms[room].getParticipant(sender)) {
+                        roomName = room;
+                        break;
+                    }
+                }
+                sendNotification(roomName, sender, 'participantJoin');
             });
             break;
 
