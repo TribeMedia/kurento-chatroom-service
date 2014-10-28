@@ -94,7 +94,11 @@ Participant.prototype = {
             this.incomingMedia[incoming].release();
         }
 
-        console.log('PARTICIPANT ' + this.name + ' is releasing outgoing media')
+        console.log('PARTICIPANT ' + this.name + ' is releasing outgoing media');
+        if (!this.outgoingMedia) {
+            console.log('Participant ' + this.name + ' has no outgoing media');
+            return;
+        }
         this.outgoingMedia.release();
     }
 };
