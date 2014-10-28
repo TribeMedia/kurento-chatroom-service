@@ -155,6 +155,7 @@ wss.on('connection', function(ws) {
 
         case 'startSend':
             var sender = message.params.sender;
+            var roomName = message.params.roomName;
             var sdpOffer = message.params.sdpOffer;
             console.log('Starting outgoing media of ' + sender);
 
@@ -178,13 +179,6 @@ wss.on('connection', function(ws) {
                 }
 
                 ws.send(JSON.stringify(message));
-                var roomName;
-                for (var room in rooms) {
-                    if (rooms[room].getParticipant(sender)) {
-                        roomName = room;
-                        break;
-                    }
-                }
                 sendNotification(roomName, sender, 'participantJoin');
             });
             break;
