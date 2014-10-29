@@ -50,28 +50,45 @@ wss.on('connection', function(ws) {
         case 'joinRoom':
             var username = message.params.username;
             var roomName = message.params.roomName;
+            var sdpOffer = message.params.sdpOffer;
 
+            console.log('Participant ' + username + 'joining room ' + roomName);
             var response = joinRoom(roomName, username, ws, function (error, response) {
-                var message;
-
                 if (error) {
-                    message = {
+                    var message = {
                         id : 'joinRoomResponse',
                         response : error,
                     };
+                    ws.send(JSON.stringify(message));
                 }
+                
                 else {
-                    var participants = getParticipantsNames(roomName);
-                    message = {
-                        id : 'joinRoomResponse',
-                        response : response,
-                        params : {
-                            participants : participants
+                    console.log('Starting outgoing media of ' + username);
+                    startSend(username, sdpOffer, function (error, sdpAnswer) {
+                        var message;
+                        
+                        if (error) {
+                            message = {
+                                id: 'joinRoomResponse',
+                                response: error
+                            };
                         }
-                    };
+                        else {
+                            var participants = getParticipantsNames(roomName);
+                            message = {
+                                id : 'joinRoomResponse',
+                                response : response,
+                                params : {
+                                    sdpAnswer: sdpAnswer,
+                                    participants: participants
+                                }
+                            };
+                        }
+
+                        ws.send(JSON.stringify(message));
+                        sendNotification(roomName, username, 'participantJoin');
+                    });
                 }
-                ws.send(JSON.stringify(message));
-                sendNotification(roomName, username, 'participantJoin');
             });
 
             break;
@@ -151,36 +168,6 @@ wss.on('connection', function(ws) {
                     };
                 }
                 ws.send(JSON.stringify(message));
-            });
-            break;
-
-        case 'startSend':
-            var sender = message.params.sender;
-            var roomName = message.params.roomName;
-            var sdpOffer = message.params.sdpOffer;
-            console.log('Starting outgoing media of ' + sender);
-
-            startSend(sender, sdpOffer, function (error, sdpAnswer) {
-                var message;
-                
-                if (error) {
-                    message = {
-                        id: 'startSendResponse',
-                        response: error
-                    };
-                }
-                else {
-                    message = {
-                        id: 'startSendResponse',
-                        response: sender + ' outgoing media started.',
-                        params: {
-                            sdpAnswer: sdpAnswer
-                        }
-                    };
-                }
-
-                ws.send(JSON.stringify(message));
-                sendNotification(roomName, sender, 'participantJoin');
             });
             break;
 
