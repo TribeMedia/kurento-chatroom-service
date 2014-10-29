@@ -61,7 +61,21 @@ wss.on('connection', function(ws) {
                     };
                     ws.send(JSON.stringify(message));
                 }
-                
+
+                else if (!sdpOffer) {
+                    var participants = getParticipantsNames(roomName);
+                    var message = {
+                        id : 'joinRoomResponse',
+                        response : response,
+                        params : {
+                            sdpAnswer: sdpAnswer,
+                            participants: participants
+                        }
+                    };
+                    ws.send(JSON.stringify(message));
+                    sendNotification(roomName, username, 'participantJoin');
+                }
+
                 else {
                     console.log('Starting outgoing media of ' + username);
                     startSend(username, sdpOffer, function (error, sdpAnswer) {
