@@ -43,7 +43,7 @@ var WebSocketServer = wsm.Server,
 
 wss.on('connection', function(ws) {
 
-    var username roomName;
+    var username, roomName;
 
     ws.on('close', function () {
         leaveRoom(username, roomName);
