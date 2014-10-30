@@ -53,7 +53,7 @@ wss.on('connection', function(ws) {
             var sdpOffer = message.params.sdpOffer;
 
             console.log('Participant ' + username + 'joining room ' + roomName);
-            var response = joinRoom(roomName, username, ws, function (error, response) {
+            joinRoom(roomName, username, ws, function (error, response) {
                 if (error) {
                     var message = {
                         id : 'joinRoomResponse',
@@ -68,7 +68,6 @@ wss.on('connection', function(ws) {
                         id : 'joinRoomResponse',
                         response : response,
                         params : {
-                            sdpAnswer: sdpAnswer,
                             participants: participants
                         }
                     };
