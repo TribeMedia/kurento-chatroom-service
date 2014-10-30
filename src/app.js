@@ -47,6 +47,7 @@ wss.on('connection', function(ws) {
 
     ws.on('close', function () {
         leaveRoom(username, roomName);
+        sendNotification(roomName, username, 'participantLeft');
     });
 
     ws.on('message', function(_message) {
