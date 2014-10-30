@@ -43,21 +43,14 @@ var WebSocketServer = wsm.Server,
 
 wss.on('connection', function(ws) {
 
-    var username, roomName;
-
-    ws.on('close', function () {
-        leaveRoom(username, roomName);
-        sendNotification(roomName, username, 'participantLeft');
-    });
-
     ws.on('message', function(_message) {
         var message = JSON.parse(_message);
 
         switch (message.id) {
         case 'joinRoom':
+            var username = message.params.username;
+            var roomName = message.params.roomName;
             var sdpOffer = message.params.sdpOffer;
-            username = message.params.username;
-            roomName = message.params.roomName;
 
             console.log('Participant ' + username + ' joining room ' + roomName);
             joinRoom(roomName, username, ws, function (error, response) {
@@ -114,13 +107,14 @@ wss.on('connection', function(ws) {
             break;
 
         case 'receiveVideoFrom':
+            var receiver = message.params.receiver;
             var sender = message.params.sender;
             var sdpOffer = message.params.sdpOffer;
             console.log('Sender: ' + sender);
-            console.log('Receiver: ' + username);
+            console.log('Receiver: ' + receiver);
             console.log('sdpOffer: ' + sdpOffer);
 
-            var sdpAnswer = receiveVideo(username, sender, sdpOffer, function (error, sdpAnswer) {
+            var sdpAnswer = receiveVideo(receiver, sender, sdpOffer, function (error, sdpAnswer) {
                 var message;
                 
                 if (error) {
@@ -132,7 +126,7 @@ wss.on('connection', function(ws) {
                 else {
                     message = {
                         id: 'receiveVideoResponse',
-                        response: username + ' receiving video from ' + sender,
+                        response: receiver + ' receiving video from ' + sender,
                         params: {
                             sender: sender,
                             sdpAnswer: sdpAnswer
@@ -146,14 +140,16 @@ wss.on('connection', function(ws) {
             break;
 
         case 'leaveRoom':
-            var response = leaveRoom(username, roomName);
+            var participantName = message.params.participantName;
+            var roomName = message.params.roomName;
+            var response = leaveRoom(participantName, roomName);
 
             ws.send(JSON.stringify({
                 id : 'leaveRoomResponse',
                 response : response
             }));
 
-            sendNotification(roomName, username, 'participantLeft');
+            sendNotification(roomName, participantName, 'participantLeft');
 
             break;
 
